@@ -9,11 +9,16 @@ import serial
 logging_begin =  datetime.now(pytz.utc)
 print_timing = False
 
-def hack_log(data_to_log):
+bean = serial.Serial(config.BEAN_SERIAL_PATH,
+                     timeout=config.BEAN_REQ_TIMEOUT_SECS)
+last_run = None
+delays = []
+
+def log_data(data_to_log):
 
     print str(data_to_log)
 
-def read_and_store(bean_serial):
+def read_n_log(bean_serial):
     bean.write(b'\n')
     raw_data = bean.readline()
     data = raw_data.decode('utf-8').rstrip('\r\n')
@@ -31,13 +36,9 @@ def read_and_store(bean_serial):
     labeled_data = dict(zip(config.DATA_FIELDS, data_split))
     labeled_data['time'] = (datetime.now(pytz.utc) - logging_begin).total_seconds()
 
-    hack_log(labeled_data)
+    log_data(labeled_data)
     return True
 
-bean = serial.Serial(config.BEAN_SERIAL_PATH,
-                     timeout=config.BEAN_REQ_TIMEOUT_SECS)
-last_run = None
-delays = []
 
 while True:
     now = datetime.now(pytz.utc)
@@ -50,7 +51,7 @@ while True:
         print sum(delays)/len(delays)
 
     if not last_run or since_last_run >= config.INTERVAL_SECS:
-        success = read_and_store(bean)
+        success = read_n_log(bean)
         if success:
             last_run = now
 

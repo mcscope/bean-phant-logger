@@ -1,6 +1,6 @@
-DATA_FIELDS = ['batt', 'temp', 'a0', 'a1']
+DATA_FIELDS = ['batt', 'temp', 'x', 'y', 'z']
 
-INTERVAL_SECS = 3
+INTERVAL_SECS = 0.1
 
 BEAN_SERIAL_PATH = '/tmp/tty.LightBlue-Bean'
 BEAN_REQ_TIMEOUT_SECS = 10
